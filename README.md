@@ -7,4 +7,4 @@
 [build]: https://travis-ci.org/embalex/pdfViewer
 
 [storybook-badge]: https://github.com/storybooks/press/blob/master/badges/storybook.svg
-[storybook]: https://embalex.github.io/pdfPreview
+[storybook]: https://embalex.github.io/pdfViewer/
