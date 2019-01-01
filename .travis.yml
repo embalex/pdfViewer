@@ -13,7 +13,7 @@ cache:
     - node_modules
 
 script:
-  - yarn run storybook-build
+  - npm run build-storybook
 
 deploy:
   provider: pages
