@@ -1,4 +1,7 @@
 module.exports = {
+  "env": {
+    "browser": true,
+  },
   "ecmaFeatures": {
     "jsx": true,
     "modules": true
