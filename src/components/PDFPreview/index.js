@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Page, Document } from 'react-pdf/dist/entry.webpack';
+import { Page } from 'react-pdf/dist/entry.webpack';
 
 import Pagination from './Pagination';
-import { Wrapper } from './PDFPreview.styled';
+import Zoom from './Zoom';
+import { zoomParameters } from './constants';
+import { Wrapper, StyledDocument } from './PDFPreview.styled';
 
 
 class PDFPreview extends Component {
@@ -21,6 +23,7 @@ class PDFPreview extends Component {
   state = {
     page: 1,
     pdfData: [],
+    zoomRatio: 1,
   };
 
   componentDidUpdate(prevProps) {
@@ -42,38 +45,62 @@ class PDFPreview extends Component {
 
   onDocumentLoadSuccess = ({ numPages }) => { this.pages = numPages; };
 
-  onIncrement = () => {
+  onPageIncrement = () => {
     const { page } = this.state;
 
     if (page === this.pages) { return; }
-    this.setState({ page: page + 1 });
+    this.setState({ page: page + 1, zoomRatio: 1 });
   };
 
-  onDecrement = () => {
+  onPageDecrement = () => {
     const { page } = this.state;
 
     if (page === 1) { return; }
-    this.setState({ page: page - 1 });
+    this.setState({ page: page - 1, zoomRatio: 1 });
   };
 
+  onZoomIn = () => {
+    const { zoomRatio } = this.state;
+    if (zoomRatio >= zoomParameters.maxRatio) { return; }
+
+    let updatedZoomValue = zoomRatio * zoomParameters.changeRatio;
+    if (updatedZoomValue > zoomParameters.maxRatio) { updatedZoomValue = zoomParameters.maxRatio; }
+    this.setState({ zoomRatio: updatedZoomValue });
+  };
+
+  onZoomOut = () => {
+    const { zoomRatio } = this.state;
+    if (zoomRatio <= zoomParameters.minRatio) { return; }
+
+    let updatedZoomValue = zoomRatio / zoomParameters.changeRatio;
+    if (updatedZoomValue < zoomParameters.minRatio) { updatedZoomValue = zoomParameters.minRatio; }
+    this.setState({ zoomRatio: updatedZoomValue });
+  };
 
   render() {
-    const { page, pdfData } = this.state;
-
+    const { page, pdfData, zoomRatio } = this.state;
     if (pdfData.length === 0) { return null; }
 
     return (
       <Wrapper>
-        <Document
+        <StyledDocument
           noData=""
           file={{ data: pdfData }}
           onLoadSuccess={this.onDocumentLoadSuccess}
         >
-          <Page pageNumber={page} />
-        </Document>
+          <Page
+            pageNumber={page}
+            scale={zoomRatio}
+            renderAnnotationLayer={false}
+          />
+        </StyledDocument>
+        <Zoom
+          onZoomIn={this.onZoomIn}
+          onZoomOut={this.onZoomOut}
+        />
         <Pagination
-          onIncrement={this.onIncrement}
-          onDecrement={this.onDecrement}
+          onIncrement={this.onPageIncrement}
+          onDecrement={this.onPageDecrement}
         />
       </Wrapper>
     );
