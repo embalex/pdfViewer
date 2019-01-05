@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { Page, Document } from 'react-pdf/dist/entry.webpack';
-//import { Page, Document } from 'react-pdf';
+
+import Pagination from './Pagination';
+import { Wrapper } from './PDFPreview.styled';
 
 
 class PDFPreview extends Component {
@@ -13,6 +15,8 @@ class PDFPreview extends Component {
   static defaultProps = {
     file: undefined,
   };
+
+  pages = 1;
 
   state = {
     page: 1,
@@ -31,10 +35,27 @@ class PDFPreview extends Component {
     })
       .then((pdfData) => {
         const data = new Uint8Array(pdfData);
-        this.setState({ pdfData: data });
+        this.setState({ pdfData: data, page: 1 });
       })
       .catch(() => this.setState({ pdfData: [] }));
   }
+
+  onDocumentLoadSuccess = ({ numPages }) => { this.pages = numPages; };
+
+  onIncrement = () => {
+    const { page } = this.state;
+
+    if (page === this.pages) { return; }
+    this.setState({ page: page + 1 });
+  };
+
+  onDecrement = () => {
+    const { page } = this.state;
+
+    if (page === 1) { return; }
+    this.setState({ page: page - 1 });
+  };
+
 
   render() {
     const { page, pdfData } = this.state;
@@ -42,14 +63,19 @@ class PDFPreview extends Component {
     if (pdfData.length === 0) { return null; }
 
     return (
-      <div>
+      <Wrapper>
         <Document
           noData=""
           file={{ data: pdfData }}
+          onLoadSuccess={this.onDocumentLoadSuccess}
         >
-          <Page pageNumber={1} />
+          <Page pageNumber={page} />
         </Document>
-      </div>
+        <Pagination
+          onIncrement={this.onIncrement}
+          onDecrement={this.onDecrement}
+        />
+      </Wrapper>
     );
   }
 }
