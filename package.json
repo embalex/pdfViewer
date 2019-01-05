@@ -48,13 +48,5 @@
     "jest-styled-components": "^6.3.1",
     "react-app-rewired": "^1.6.2",
     "storybook-addon-styled-component-theme": "^1.1.0"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
-    ],
-    "snapshotSerializers": [
-      "<rootDir>/node_modules/enzyme-to-json/serializer"
-    ]
   }
 }
