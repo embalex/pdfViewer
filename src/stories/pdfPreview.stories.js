@@ -1,10 +1,9 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import App from '../components/App';
+
+import Demo from '../components/Demo';
 
 
-storiesOf('App ', module)
-  .add('basic story', () => (
-    <App />
-  ));
+storiesOf('PDF preview ', module)
+  .add('main', () => <Demo />);
